@@ -1,0 +1,18 @@
+# prd: production. Locked down and quiet.
+# DB_URL / DB_USERNAME / DB_PASSWORD come from a secrets manager (Vault, AWS Secrets Manager, K8s Secret) as env vars.
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+
+# don't publish the API map to the internet
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.spring.demo.springdemo: INFO

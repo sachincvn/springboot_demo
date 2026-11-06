@@ -1,11 +1,14 @@
+# Shared defaults for ALL environments. Profile files (application-{dev,qa,prd}.yaml) override only what differs.
+# Pick the environment with SPRING_PROFILES_ACTIVE=dev|qa|prd (env var) — same JAR everywhere.
 spring:
   application:
     name: springdemo
 
-  # DB_URL / DB_USERNAME / DB_PASSWORD live in .env (git-ignored), never in this file
-  config:
-    import: optional:file:.env[.properties]
+  profiles:
+    # local convenience: no profile set -> dev. Servers must always set SPRING_PROFILES_ACTIVE explicitly.
+    default: dev
 
+  # values come from environment variables (servers) or .env (dev only); never commit real secrets
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -15,11 +18,10 @@ spring:
     # keep DB access inside the service layer; lazy loading in controllers/JSON is a classic bug source
     open-in-view: false
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      # safe default: check entities match the schema, never change it
+      ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
         # loads lazy collections in batches instead of one query per row (avoids N+1)
         default_batch_fetch_size: 50
 

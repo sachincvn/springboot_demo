@@ -1,0 +1,18 @@
+# dev: your laptop. Fast feedback, verbose output.
+spring:
+  config:
+    # DB_URL / DB_USERNAME / DB_PASSWORD from the git-ignored .env (copy .env.example)
+    import: optional:file:.env[.properties]
+
+  jpa:
+    hibernate:
+      # shortcut: Hibernate edits the schema for you; fine locally, replaced by Flyway migrations later
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.spring.demo.springdemo: DEBUG

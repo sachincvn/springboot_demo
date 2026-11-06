@@ -1,0 +1,11 @@
+# qa: shared test server. Behaves like prd (same schema rules) but keeps Swagger and app debug logs for testers.
+# DB_URL / DB_USERNAME / DB_PASSWORD are injected as environment variables by the CI/CD pipeline.
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+
+logging:
+  level:
+    root: INFO
+    com.spring.demo.springdemo: DEBUG
