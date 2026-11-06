@@ -27,6 +27,40 @@ One JAR, three profiles. Select with `SPRING_PROFILES_ACTIVE=dev|qa|prd` (Intell
 `application.yaml` holds the shared defaults; each profile file contains only what differs.
 Secrets are never in YAML, only `${DB_PASSWORD}`-style placeholders.
 
+### Database per environment
+
+Each environment has its **own database server and credentials**. The code is identical; only the
+environment variables differ, set where that environment runs:
+
+| | `DB_URL` (example) | Set by |
+|---|---|---|
+| dev | `jdbc:postgresql://localhost:5432/springdemo_db` | your `.env` |
+| qa | `jdbc:postgresql://qa-db.internal:5432/springdemo_qa` | CI/CD secrets for the qa deploy |
+| prd | `jdbc:postgresql://prd-db.internal:5432/springdemo` | secrets manager for production |
+
+Rules: never point dev or qa at the production database, and never reuse prd credentials elsewhere.
+
+## Branching (Git flow-lite)
+
+| Branch | Deploys to | Who merges |
+|---|---|---|
+| `feature/*`, `bugfix/*` | nowhere (your laptop) | you |
+| `develop` | dev environment | PR from feature branch, 1 review |
+| `qa` | qa environment | PR `develop` → `qa` when a set of features is ready for testing |
+| `main` | production (prd) | PR `qa` → `main` after QA sign-off, tagged `v1.2.0` |
+| `hotfix/*` | prd, urgent fixes | branch from `main`, PR to `main`, then merge back into `qa` and `develop` |
+
+Day to day:
+```bash
+git checkout develop && git pull
+git checkout -b feature/order-search      # one branch per task
+# ...commit work...
+git push -u origin feature/order-search   # open a PR into develop
+```
+- Never commit directly to `develop`, `qa` or `main`; always through a pull request.
+- The same commit flows upward (develop → qa → main); you never build a different version per env.
+- Commit messages: `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...` (Conventional Commits).
+
 ## Structure: package by feature
 
 ```
