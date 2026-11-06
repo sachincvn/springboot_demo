@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: springdemo
+
+  # DB_URL / DB_USERNAME / DB_PASSWORD live in .env (git-ignored), never in this file
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    # keep DB access inside the service layer; lazy loading in controllers/JSON is a classic bug source
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        # loads lazy collections in batches instead of one query per row (avoids N+1)
+        default_batch_fetch_size: 50
+
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+
+# third-party integrations: URLs/timeouts are config, never hardcoded in code
+integration:
+  exchange-rate:
+    base-url: https://api.frankfurter.dev/v1
+    connect-timeout: 2s
+    read-timeout: 3s
