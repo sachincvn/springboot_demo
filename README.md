@@ -58,6 +58,9 @@ git checkout -b feature/order-search      # one branch per task
 git push -u origin feature/order-search   # open a PR into develop
 ```
 - Never commit directly to `develop`, `qa` or `main`; always through a pull request.
+  GitHub enforces this (branch protection, admins included): a PR can merge only when the
+  **`build`** CI check is green and the branch is up to date. Force-pushes and branch deletion are blocked.
+- CI (`.github/workflows/ci.yml`) runs `./mvnw verify` against a throwaway Postgres on every PR and push.
 - The same commit flows upward (develop → qa → main); you never build a different version per env.
 - Commit messages: `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...` (Conventional Commits).
 
